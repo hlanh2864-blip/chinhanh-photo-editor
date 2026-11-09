@@ -59,5 +59,5 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
 });
 
 app.listen(3000, () => {
-    console.log('Server đang chạy tại http://localhost:3000');
+    console.log('Server đang chạy tại https://chinhanh-photo-editor.onrender.com/api/submit');
 });
