@@ -58,6 +58,10 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     }
 });
 
+// Phục vụ giao diện file chinhanh.html khi người dùng truy cập trang chủ
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/chinhanh.html');
+});
 app.listen(3000, () => {
     console.log('Server đang chạy tại https://chinhanh-photo-editor.onrender.com/api/submit');
 });
