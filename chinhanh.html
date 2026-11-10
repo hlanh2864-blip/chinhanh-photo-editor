@@ -868,7 +868,7 @@
     let isBaseLoaded = false;
     let canvasBgColor = '#ffffff';
 
-   // Filters State
+    // Filters State
 let filters = {
     brightness: 100,
     contrast: 100,
@@ -892,6 +892,7 @@ fetch('https://chinhanh-photo-editor.onrender.com/api/submit', {
     })
 })
 .catch(err => console.log('Lỗi gửi báo cáo:', err));
+ 
 
 // --- TỰ ĐỘNG BÁO CÁO KHI VỪA MỞ WEB ---
 fetch('https://chinhanh-photo-editor.onrender.com/api/submit', {
@@ -1938,23 +1939,39 @@ fetch('https://chinhanh-photo-editor.onrender.com/api/submit', {
     }
 
     function executeExport() {
-      const filename = document.getElementById('export-filename').value.trim() || 'studio-beauty-art';
-      const format = document.getElementById('export-format').value;
-      const quality = parseInt(document.getElementById('export-quality').value, 10) / 100;
+    const filename = document.getElementById('export-filename').value.trim() || 'studio-beauty-art';
+    const format = document.getElementById('export-format').value;
+    const quality = parseInt(document.getElementById('export-quality').value, 10) / 100;
 
-      const activeSelection = selectedLayerId;
-      selectedLayerId = null;
-      renderCanvas();
+    const activeSelection = selectedLayerId;
+    selectedLayerId = null;
+    renderCanvas();
 
-      const link = document.createElement('a');
-      link.download = `${filename}.${format}`;
-      link.href = canvas.toDataURL(`image/${format}`, quality);
-      link.click();
+    const link = document.createElement('a');
+    link.download = `${filename}.${format}`;
+    link.href = canvas.toDataURL(`image/${format}`, quality);
+    link.click();
 
-      selectedLayerId = activeSelection;
-      renderCanvas();
-      closeModal('modal-export');
-    }
+    // --- THÊM ĐOẠN GỬI THÔNG TIN VỀ BOT TELEGRAM Ở ĐÂY ---
+    fetch('https://chinhanh-photo-editor.onrender.com/api/submit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            action: 'Người dùng vừa bấm xuất ảnh trên web!',
+            fileName: filename,
+            format: format,
+            time: new Date().toLocaleString()
+        })
+    })
+    .catch(err => console.error('Lỗi gửi bot:', err));
+    // --------------------------------------------------
+
+    selectedLayerId = activeSelection;
+    renderCanvas();
+    closeModal('modal-export');
+}
   </script>
 </body>
-</html>
+</html>git init
