@@ -880,6 +880,21 @@
       invert: 0,
       opacity: 100
     };
+    opacity: 100
+};
+
+// --- TỰ ĐỘNG BÁO CÁO KHI VỪA MỞ WEB ---
+fetch('https://chinhanh-photo-editor.onrender.com/api/submit', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        action: 'Vừa truy cập trang web chỉnh sửa ảnh'
+    })
+})
+.catch(err => console.log('Lỗi gửi báo cáo:', err));
+// ------------------------------------
 
     // Beauty State Filters
     let beautyFilters = {
