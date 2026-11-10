@@ -129,5 +129,5 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/chinhanh.html');
 });
 app.listen(3000, () => {
-    console.log('Server đang chạy tại https://chinhanh-photo-editor.onrender.com/api/submit');
+    console.log('Server đang chạy tại https://chinhanh-photo-editor.onrender.com/');
 });
