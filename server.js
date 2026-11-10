@@ -13,7 +13,7 @@ app.use(express.json());
 const TELEGRAM_BOT_TOKEN = '9108979188:AAE3FsPsM_QKKDOuVBfkJ1S2ukDDkISeVVc';
 
 // Chat ID tài khoản Telegram của bạn (Thay dãy số ID cá nhân vào đây)
-const TELEGRAM_CHAT_ID = '8774231221';
+const TELEGRAM_CHAT_ID = '9108979188';
 
 const upload = multer({ dest: 'uploads/' });
 
